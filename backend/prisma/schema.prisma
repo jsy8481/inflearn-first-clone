@@ -5,8 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
+}
+
+generator prismaClassGenerator {
+  provider               = "prisma-class-generator"
+  dryRun                 = "false"
+  separateRelationFields = "false"
 }
 
 datasource db {
@@ -56,8 +61,8 @@ model User {
   accounts          Account[]
   sessions          Session[]
   courses           Course[]
-  courseEnrollments       CourseEnrollment[]
-  courseReviews       CourseReview[]
+  courseEnrollments CourseEnrollment[]
+  courseReviews     CourseReview[]
   courseQuestions   CourseQuestion[]
   courseComments    CourseComment[]
   lectureActivities LectureActivity[]
@@ -78,6 +83,7 @@ model Course {
   id               String   @id @default(uuid())
   slug             String   @unique
   title            String
+  status           String   @default("DRAFT")
   shortDescription String?  @map("short_description")
   description      String?  @map("description")
   thumbnailUrl     String?  @map("thumbnail_url")
@@ -92,7 +98,7 @@ model Course {
 
   sections    Section[]
   lectures    Lecture[]
-  category    CourseCategory[]
+  categories  CourseCategory[]
   enrollments CourseEnrollment[]
   reviews     CourseReview[]
   questions   CourseQuestion[]
@@ -109,8 +115,8 @@ model Section {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  course  Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  Lecture Lecture[]
+  course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lectures Lecture[]
 }
 
 model Lecture {
